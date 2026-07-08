@@ -855,6 +855,33 @@ function titleFor(k, low){
 }
 function subFor(m, low){ return typeof m.sub==="string" ? m.sub : (low ? m.sub.lo : m.sub.up); }
 function titleForPlain(k){ return {dmf:"DMF", icdas:"ICDAS-II", cast:"CAST", pufa:"PUFA", icsc:"ICSC"}[k] || k.toUpperCase(); }
+function ensureNotesBlocks(containerId, prefix){
+  const host = document.getElementById(containerId);
+  if(!host) return;
+  host.querySelectorAll(".iblock[data-idx]").forEach(ib=>{
+    const k = ib.getAttribute("data-idx");
+    if(!k || ib.querySelector(`#notes_${prefix}_${k}`)) return;
+    const wrap = document.createElement("div");
+    wrap.className = "iblock-notes";
+    const label = document.createElement("label");
+    label.className = "notes-label";
+    label.setAttribute("for", `notes_${prefix}_${k}`);
+    label.appendChild(document.createTextNode("Notes / comments "));
+    const tag = document.createElement("span");
+    tag.className = "opt-tag";
+    tag.textContent = "optional";
+    label.appendChild(tag);
+    const area = document.createElement("textarea");
+    area.id = `notes_${prefix}_${k}`;
+    area.name = `${prefix}_${k}_notes`;
+    area.className = "notes-field";
+    area.rows = 2;
+    area.placeholder = `Any issues while recording ${titleForPlain(k)} - e.g. tooth hard to assess, restoration obscured margin, lesion borderline...`;
+    wrap.appendChild(label);
+    wrap.appendChild(area);
+    ib.appendChild(wrap);
+  });
+}
 
 function buildDentition(containerId, quads, prefix, low){
   let html = "";
@@ -904,6 +931,7 @@ function buildDentition(containerId, quads, prefix, low){
     </div>`;
   });
   document.getElementById(containerId).innerHTML = html;
+  ensureNotesBlocks(containerId, prefix);
 }
 // Show/hide the 1b & 1a sub-readings for a tooth when ICSC main score = 1
 function toggleIcscSub(prefix, t){
