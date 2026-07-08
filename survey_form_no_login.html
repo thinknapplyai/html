@@ -856,6 +856,7 @@ function titleFor(k, low){
 function subFor(m, low){ return typeof m.sub==="string" ? m.sub : (low ? m.sub.lo : m.sub.up); }
 function titleForPlain(k){ return {dmf:"DMF", icdas:"ICDAS-II", cast:"CAST", pufa:"PUFA", icsc:"ICSC"}[k] || k.toUpperCase(); }
 function ensureNotesBlocks(containerId, prefix){
+  if(typeof prefix!=="string" || !prefix.trim()) return;
   const host = document.getElementById(containerId);
   if(!host) return;
   host.querySelectorAll(".iblock[data-idx]").forEach(ib=>{
